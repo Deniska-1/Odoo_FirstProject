@@ -5,6 +5,7 @@ class Checkout(models.Model):
     _name = 'library.checkout'
     _description = 'Checkout Request'
     _inherit = ['mail.thread', 'mail.activity.mixin']
+    _rec_name = 'request_date'
 
     @api.multi
     def name_get(self):
@@ -116,6 +117,20 @@ class Checkout(models.Model):
     def _compute_num_books(self):
         for book in self:
             book.num_books = len(book.line_ids)
+
+    color = fields.Integer('Color Index')
+    priority = fields.Selection(
+        [('0', 'Low'),
+         ('1', 'Normal'),
+         ('2', 'High')],
+        'Priority',
+        default='1')
+    kanban_state = fields.Selection(
+        [('normal', 'In Progress'),
+         ('blocked', 'Blocked'),
+         ('done', 'Ready for next stage')],
+        'Kanban State',
+        default='normal')
 
 
 class CheckoutLine(models.Model):
